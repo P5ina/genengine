@@ -38,6 +38,39 @@ All tools available to the AI agent.
 | `get_errors` | Get current diagnostics (errors, warnings) |
 | `get_file_errors` | Get errors for a specific file |
 
+## godot/animation — Animations
+
+| Tool | Description |
+|------|-------------|
+| `setup_8dir_sprite` | Unpack gensprite 8-direction archive, configure AnimatedSprite2D + direction helper script |
+| `setup_animated_sprite` | Configure AnimatedSprite2D from a spritesheet with named animations |
+
+## godot/ui — UI & HUD
+
+| Tool | Description |
+|------|-------------|
+| `create_hud` | Create a HUD scene (labels, health bars, buttons) |
+| `create_menu` | Create a menu scene with title and buttons |
+
+## godot/signals — Signals
+
+| Tool | Description |
+|------|-------------|
+| `connect_signal` | Connect a signal between two nodes in a .tscn file |
+
+## godot/input_map — Input
+
+| Tool | Description |
+|------|-------------|
+| `setup_input_actions` | Add input actions to project.godot (keyboard/gamepad bindings) |
+
+## godot/resources — Resources
+
+| Tool | Description |
+|------|-------------|
+| `create_tileset` | Create a TileSet .tres from a tileset texture |
+| `create_save_system` | Generate a SaveManager.gd autoload with save/load/reset |
+
 ## godot/tilemap — TileMap Operations
 
 | Tool | Description |

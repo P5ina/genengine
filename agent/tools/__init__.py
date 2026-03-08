@@ -5,7 +5,7 @@ Tool Registry — registers all tools and routes calls.
 from typing import Any
 from godot.bridge import GodotBridge
 from godot.lsp import GodotLSP
-from tools.godot import fs, scene, engine, tilemap
+from tools.godot import fs, scene, engine, tilemap, animation, ui, signals, input_map, resources
 from tools.gensprite import assets
 
 
@@ -29,6 +29,19 @@ class ToolRegistry:
             "get_errors": engine.get_errors,
             # godot/tilemap
             "load_tilemap_from_grid": tilemap.load_from_grid,
+            # godot/animation
+            "setup_8dir_sprite": animation.setup_8dir_sprite,
+            "setup_animated_sprite": animation.setup_animated_sprite,
+            # godot/ui
+            "create_hud": ui.create_hud,
+            "create_menu": ui.create_menu,
+            # godot/signals
+            "connect_signal": signals.connect_signal,
+            # godot/input_map
+            "setup_input_actions": input_map.setup_input_actions,
+            # godot/resources
+            "create_tileset": resources.create_tileset,
+            "create_save_system": resources.create_save_system,
             # gensprite
             "generate_sprite": assets.generate_sprite,
             "generate_tileset": assets.generate_tileset,
