@@ -33,7 +33,7 @@ class AgentServer:
     async def start(self):
         log.info("Starting genengine agent server...")
 
-        # Wait for Godot bridge and LSP to be ready
+        # Connect to Bridge (inside plugin) and LSP (built into editor)
         await self.bridge.connect()
         await self.lsp.connect()
 
