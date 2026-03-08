@@ -3,6 +3,7 @@ genengine Agent Server
 Listens on localhost:7821, communicates with Godot plugin.
 """
 
+import argparse
 import asyncio
 import json
 import logging
@@ -10,6 +11,7 @@ import signal
 import sys
 from typing import Optional
 
+from gensprite.config import fetch_config, AgentConfig
 from llm.client import LLMClient
 from tools import ToolRegistry
 from godot.bridge import GodotBridge
@@ -24,11 +26,12 @@ LSP_PORT = 6005
 
 
 class AgentServer:
-    def __init__(self):
+    def __init__(self, config: AgentConfig):
+        self.config = config
         self.bridge = GodotBridge(port=BRIDGE_PORT)
         self.lsp = GodotLSP(port=LSP_PORT)
-        self.tools = ToolRegistry(bridge=self.bridge, lsp=self.lsp)
-        self.llm = LLMClient(tools=self.tools.get_definitions())
+        self.tools = ToolRegistry(bridge=self.bridge, lsp=self.lsp, config=config)
+        self.llm = LLMClient(tools=self.tools.get_definitions(), config=config)
 
     async def start(self):
         log.info("Starting genengine agent server...")
@@ -74,7 +77,14 @@ class AgentServer:
 
 
 async def main():
-    server = AgentServer()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--key", required=True, help="gensprite API key")
+    args = parser.parse_args()
+
+    log.info("Authenticating with gensprite...")
+    config = await fetch_config(args.key)
+
+    server = AgentServer(config)
 
     loop = asyncio.get_running_loop()
     for sig in (signal.SIGINT, signal.SIGTERM):

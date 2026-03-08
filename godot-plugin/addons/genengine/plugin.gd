@@ -11,6 +11,7 @@ var bridge_peer: StreamPeerTCP
 
 
 func _enable_plugin() -> void:
+	_register_settings()
 	_start_agent()
 	_start_bridge()
 	_add_chat_panel()
@@ -23,7 +24,26 @@ func _disable_plugin() -> void:
 
 # ─── Agent Process ────────────────────────────────────────────────────────────
 
+func _register_settings() -> void:
+	# Only one key needed — the gensprite API key
+	# All other credentials (LLM, etc.) are provisioned server-side
+	if not ProjectSettings.has_setting("genengine/api/key"):
+		ProjectSettings.set_setting("genengine/api/key", "")
+		ProjectSettings.set_initial_value("genengine/api/key", "")
+		ProjectSettings.add_property_info({
+			"name": "genengine/api/key",
+			"type": TYPE_STRING,
+			"hint": PROPERTY_HINT_PASSWORD,
+			"hint_string": "genengine API key (get it from gensprite.ai/dashboard)",
+		})
+
+
 func _start_agent() -> void:
+	var api_key = _get_setting("genengine/api/key", "")
+	if api_key.is_empty():
+		push_error("genengine: API key not set. Go to Project Settings → genengine/api/key")
+		return
+
 	var binary = _get_binary_path()
 	if binary.is_empty():
 		push_error("genengine: unsupported OS")
@@ -33,12 +53,8 @@ func _start_agent() -> void:
 		push_error("genengine: binary not found at " + binary)
 		return
 
-	var env = {
-		"ANTHROPIC_API_KEY": _get_setting("genengine/api/anthropic_key", ""),
-		"GENSPRITE_API_KEY": _get_setting("genengine/api/gensprite_key", ""),
-	}
-
-	agent_pid = OS.create_process(binary, [], false)
+	# Pass only the gensprite key — agent fetches LLM credentials from gensprite API
+	agent_pid = OS.create_process(binary, ["--key", api_key], false)
 	print("genengine: agent started (pid %d)" % agent_pid)
 
 
