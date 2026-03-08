@@ -104,6 +104,10 @@ func _handle_bridge_command(raw: String) -> void:
 			result = _list_files(params.get("path", ""))
 		"get_scene_tree":
 			result = _get_scene_tree(params.get("path", ""))
+		"get_project_path":
+			result = ProjectSettings.globalize_path("res://")
+		"setup_input_actions":
+			result = _setup_input_actions(params.get("actions", {}))
 		_:
 			_bridge_respond({"error": "unknown command: " + cmd})
 			return
@@ -150,6 +154,80 @@ func _list_files(path: String) -> Array:
 func _get_scene_tree(path: String) -> Dictionary:
 	# Return raw .tscn content for now; agent parses it
 	return {"content": _read_file(path)}
+
+
+func _setup_input_actions(actions: Dictionary) -> Dictionary:
+	# Add input actions via InputMap + ProjectSettings API
+	# This runs natively inside the editor — no file parsing needed
+	var added = []
+	for action_name in actions:
+		var keys: Array = actions[action_name]
+
+		# Add action if it doesn't exist
+		if not InputMap.has_action(action_name):
+			InputMap.add_action(action_name, 0.5)
+
+		for key_name in keys:
+			var event = InputEventKey.new()
+			event.keycode = _key_name_to_keycode(key_name)
+			if event.keycode != KEY_NONE:
+				InputMap.action_add_event(action_name, event)
+
+		# Persist to ProjectSettings so it survives restart
+		var events_array = InputMap.action_get_events(action_name)
+		ProjectSettings.set_setting("input/" + action_name, {
+			"deadzone": 0.5,
+			"events": events_array,
+		})
+		added.append(action_name)
+
+	ProjectSettings.save()
+	return {"added": added}
+
+
+func _key_name_to_keycode(key: String) -> Key:
+	match key.to_lower():
+		"space":  return KEY_SPACE
+		"enter":  return KEY_ENTER
+		"escape": return KEY_ESCAPE
+		"up":     return KEY_UP
+		"down":   return KEY_DOWN
+		"left":   return KEY_LEFT
+		"right":  return KEY_RIGHT
+		"shift":  return KEY_SHIFT
+		"ctrl":   return KEY_CTRL
+		"a":      return KEY_A
+		"b":      return KEY_B
+		"c":      return KEY_C
+		"d":      return KEY_D
+		"e":      return KEY_E
+		"f":      return KEY_F
+		"g":      return KEY_G
+		"h":      return KEY_H
+		"i":      return KEY_I
+		"j":      return KEY_J
+		"k":      return KEY_K
+		"l":      return KEY_L
+		"m":      return KEY_M
+		"n":      return KEY_N
+		"o":      return KEY_O
+		"p":      return KEY_P
+		"q":      return KEY_Q
+		"r":      return KEY_R
+		"s":      return KEY_S
+		"t":      return KEY_T
+		"u":      return KEY_U
+		"v":      return KEY_V
+		"w":      return KEY_W
+		"x":      return KEY_X
+		"y":      return KEY_Y
+		"z":      return KEY_Z
+		"1":      return KEY_1
+		"2":      return KEY_2
+		"3":      return KEY_3
+		"4":      return KEY_4
+		"5":      return KEY_5
+		_:        return KEY_NONE
 
 
 # ─── UI ───────────────────────────────────────────────────────────────────────
