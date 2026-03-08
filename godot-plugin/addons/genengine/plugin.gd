@@ -108,6 +108,22 @@ func _handle_bridge_command(raw: String) -> void:
 			result = ProjectSettings.globalize_path("res://")
 		"setup_input_actions":
 			result = _setup_input_actions(params.get("actions", {}))
+		"add_autoload":
+			result = _add_autoload(params.get("name", ""), params.get("path", ""))
+		"remove_autoload":
+			result = _remove_autoload(params.get("name", ""))
+		"set_collision_layer_name":
+			result = _set_collision_layer_name(params.get("layer", 1), params.get("name", ""))
+		"set_window_size":
+			result = _set_window_size(params.get("width", 1280), params.get("height", 720))
+		"set_project_setting":
+			result = _set_project_setting(params.get("key", ""), params.get("value"))
+		"rescan_filesystem":
+			EditorInterface.get_resource_filesystem().scan()
+			result = true
+		"get_current_scene":
+			var root = EditorInterface.get_edited_scene_root()
+			result = root.scene_file_path if root else ""
 		_:
 			_bridge_respond({"error": "unknown command: " + cmd})
 			return
@@ -154,6 +170,38 @@ func _list_files(path: String) -> Array:
 func _get_scene_tree(path: String) -> Dictionary:
 	# Return raw .tscn content for now; agent parses it
 	return {"content": _read_file(path)}
+
+
+func _add_autoload(name: String, path: String) -> bool:
+	# Prefix with * means enabled
+	ProjectSettings.set_setting("autoload/" + name, "*" + path)
+	ProjectSettings.save()
+	return true
+
+
+func _remove_autoload(name: String) -> bool:
+	ProjectSettings.set_setting("autoload/" + name, "")
+	ProjectSettings.save()
+	return true
+
+
+func _set_collision_layer_name(layer: int, name: String) -> bool:
+	ProjectSettings.set_setting("layer_names/2d_physics/layer_" + str(layer), name)
+	ProjectSettings.save()
+	return true
+
+
+func _set_window_size(width: int, height: int) -> bool:
+	ProjectSettings.set_setting("display/window/size/viewport_width", width)
+	ProjectSettings.set_setting("display/window/size/viewport_height", height)
+	ProjectSettings.save()
+	return true
+
+
+func _set_project_setting(key: String, value: Variant) -> bool:
+	ProjectSettings.set_setting(key, value)
+	ProjectSettings.save()
+	return true
 
 
 func _setup_input_actions(actions: Dictionary) -> Dictionary:
