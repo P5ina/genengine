@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+dist/
+build/
+*.spec
+
+# Binaries (distributed via releases)
+godot-plugin/addons/genengine/bin/genengine-*
+
+# Env
+.env
+
+# IDE
+.idea/
+.vscode/
