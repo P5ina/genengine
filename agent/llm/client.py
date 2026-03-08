@@ -27,10 +27,12 @@ Be direct. Don't explain what you're about to do — just do it.
 After completing, give a brief summary of what was created.
 
 Important Godot rules:
-- Always generate UIDs for new resources using generate_uid tool
+- NEVER invent or hardcode UIDs. Every uid="..." in .tscn/.tres MUST come from the generate_uid tool.
+  Call generate_uid for each resource that needs one, then use the returned value.
 - Use @export for variables that should be editable in Inspector
 - CharacterBody2D for players/enemies, Area2D for triggers/pickups
 - Signals over direct function calls when possible
+- When creating scenes, always use create_scene tool — do not write raw .tscn via write_file
 """
 
 

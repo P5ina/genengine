@@ -75,7 +75,7 @@ TOOL_DEFINITIONS = [
     },
     {
         "name": "write_file",
-        "description": "Write content to a file in the Godot project",
+        "description": "Write content to a file in the Godot project. Use for .gd scripts only. For scenes (.tscn) use create_scene. For resources (.tres) use the appropriate resource tool. Never write UIDs manually — always get them from generate_uid.",
         "input_schema": {
             "type": "object",
             "properties": {
