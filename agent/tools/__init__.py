@@ -210,4 +210,150 @@ TOOL_DEFINITIONS = [
             "required": ["prompt", "output_path"]
         }
     },
+
+    # ── Animation ─────────────────────────────────────────────────────────────
+    {
+        "name": "setup_8dir_sprite",
+        "description": "Unpack a gensprite 8-direction archive (n/ne/e/se/s/sw/w/nw) and configure AnimatedSprite2D with a direction helper script",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "scene_path":      {"type": "string", "description": "Scene that contains the AnimatedSprite2D"},
+                "node_path":       {"type": "string", "description": "Path to AnimatedSprite2D node"},
+                "archive_path":    {"type": "string", "description": "Path to .zip from gensprite"},
+                "animation_name":  {"type": "string", "default": "walk"},
+                "fps":             {"type": "integer", "default": 8}
+            },
+            "required": ["scene_path", "node_path", "archive_path"]
+        }
+    },
+    {
+        "name": "setup_animated_sprite",
+        "description": "Configure AnimatedSprite2D from a spritesheet with named animations",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "scene_path":   {"type": "string"},
+                "node_path":    {"type": "string"},
+                "texture_path": {"type": "string"},
+                "animations": {
+                    "type": "object",
+                    "description": "e.g. {\"idle\": {\"frames\": 4, \"fps\": 8}, \"run\": {\"frames\": 6, \"fps\": 12}}"
+                }
+            },
+            "required": ["scene_path", "node_path", "texture_path", "animations"]
+        }
+    },
+
+    # ── UI ────────────────────────────────────────────────────────────────────
+    {
+        "name": "create_hud",
+        "description": "Create a HUD CanvasLayer scene with labels, health bars, and buttons",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "scene_path": {"type": "string"},
+                "elements": {
+                    "type": "array",
+                    "description": "List of UI elements. Each: {type: label|health_bar|button, name, text?, position, max?}"
+                }
+            },
+            "required": ["scene_path", "elements"]
+        }
+    },
+    {
+        "name": "create_menu",
+        "description": "Create a menu scene with a title and buttons",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "scene_path": {"type": "string"},
+                "title":      {"type": "string"},
+                "buttons":    {"type": "array", "items": {"type": "string"}}
+            },
+            "required": ["scene_path", "title", "buttons"]
+        }
+    },
+
+    # ── Signals ───────────────────────────────────────────────────────────────
+    {
+        "name": "connect_signal",
+        "description": "Connect a signal between two nodes in a .tscn file",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "scene_path":   {"type": "string"},
+                "from_node":    {"type": "string", "description": "Node path, e.g. Player"},
+                "signal_name":  {"type": "string"},
+                "to_node":      {"type": "string"},
+                "method":       {"type": "string"}
+            },
+            "required": ["scene_path", "from_node", "signal_name", "to_node", "method"]
+        }
+    },
+
+    # ── Project Settings ──────────────────────────────────────────────────────
+    {
+        "name": "add_autoload",
+        "description": "Add an autoload singleton to the project (e.g. SaveManager, GameManager)",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "name": {"type": "string", "description": "Autoload name, e.g. SaveManager"},
+                "path": {"type": "string", "description": "Script path, e.g. res://scripts/SaveManager.gd"}
+            },
+            "required": ["name", "path"]
+        }
+    },
+    {
+        "name": "remove_autoload",
+        "description": "Remove an autoload singleton from the project",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "name": {"type": "string"}
+            },
+            "required": ["name"]
+        }
+    },
+    {
+        "name": "set_collision_layer_name",
+        "description": "Name a 2D physics collision layer for readability",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "layer": {"type": "integer", "description": "Layer number 1-32"},
+                "name":  {"type": "string", "description": "e.g. player, enemies, world"}
+            },
+            "required": ["layer", "name"]
+        }
+    },
+    {
+        "name": "set_window_size",
+        "description": "Set the game window/viewport size",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "width":  {"type": "integer"},
+                "height": {"type": "integer"}
+            },
+            "required": ["width", "height"]
+        }
+    },
+    {
+        "name": "rescan_filesystem",
+        "description": "Tell Godot Editor to rescan the project filesystem. Call this after writing files so Godot picks up the changes.",
+        "input_schema": {
+            "type": "object",
+            "properties": {}
+        }
+    },
+    {
+        "name": "get_current_scene",
+        "description": "Get the path of the scene currently open in the Godot Editor",
+        "input_schema": {
+            "type": "object",
+            "properties": {}
+        }
+    },
 ]
